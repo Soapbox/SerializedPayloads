@@ -3,9 +3,9 @@
 namespace SoapBox\SerializedPayloads\Tests\Unit;
 
 use Carbon\Carbon;
-use Ramsey\Uuid\Uuid;
 use Illuminate\Http\Request;
 use SoapBox\SerializedPayloads\Payload;
+use Ramsey\Uuid\Lazy\LazyUuidFromString;
 use SoapBox\SerializedPayloads\Tests\TestCase;
 
 class PayloadTest extends TestCase
@@ -17,7 +17,7 @@ class PayloadTest extends TestCase
     {
         $payload = Payload::create(['data' => '{}']);
 
-        $this->assertInstanceOf(Uuid::class, $payload->getKey());
+        $this->assertInstanceOf(LazyUuidFromString::class, $payload->getKey());
         $this->assertNotEmpty($payload->getKey());
         $this->assertFalse(is_numeric($payload->getKey()));
     }
@@ -29,7 +29,7 @@ class PayloadTest extends TestCase
     {
         Carbon::setTestNow(now());
 
-        $payload = factory(Payload::class)->states('unprocessed')->create();
+        $payload = Payload::factory()->unprocessed()->create();
 
         $this->assertNull($payload->processed_at);
 
@@ -44,10 +44,10 @@ class PayloadTest extends TestCase
     {
         Carbon::setTestNow(now());
 
-        factory(Payload::class)->states('recently-processed')->create();
-        factory(Payload::class)->states('unprocessed')->create();
-        factory(Payload::class)->create(['processed_at' => now()->subDay()]);
-        $shouldDelete = factory(Payload::class)->create(['processed_at' => now()->subDay()->subSecond()]);
+        Payload::factory()->recentlyProcessed()->create();
+        Payload::factory()->unprocessed()->create();
+        Payload::factory()->create(['processed_at' => now()->subDay()]);
+        $shouldDelete = Payload::factory()->create(['processed_at' => now()->subDay()->subSecond()]);
 
         $payloads = Payload::shouldDelete()->get();
 

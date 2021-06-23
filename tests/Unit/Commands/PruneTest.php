@@ -12,9 +12,9 @@ class PruneTest extends TestCase
      */
     public function it_deletes_only_the_payloads_that_should_be_deleted()
     {
-        $payload1 = factory(Payload::class)->states('recently-processed')->create();
-        $payload2 = factory(Payload::class)->states('unprocessed')->create();
-        $payload3 = factory(Payload::class)->states('should-delete')->create();
+        $payload1 = Payload::factory()->recentlyProcessed()->create();
+        $payload2 = Payload::factory()->unprocessed()->create();
+        $payload3 = Payload::factory()->shouldDelete()->create();
 
         $this->artisan('serialized-payloads:prune');
 
@@ -28,8 +28,8 @@ class PruneTest extends TestCase
      */
     public function it_deletes_all_the_payloads_that_should_be_deleted()
     {
-        $payload1 = factory(Payload::class)->states('should-delete')->create();
-        $payload2 = factory(Payload::class)->states('should-delete')->create();
+        $payload1 = Payload::factory()->shouldDelete()->create();
+        $payload2 = Payload::factory()->shouldDelete()->create();
 
         $this->artisan('serialized-payloads:prune');
 

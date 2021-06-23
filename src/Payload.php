@@ -7,9 +7,12 @@ use Ramsey\Uuid\Uuid;
 use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use SoapBox\SerializedPayloads\Factories\PayloadFactory;
 
 class Payload extends Model
 {
+    use HasFactory;
     /**
      * The table associated with the model.
      *
@@ -98,5 +101,10 @@ class Payload extends Model
     public function scopeShouldDelete(Builder $query): Builder
     {
         return $query->where('processed_at', '<', Carbon::now()->subDay());
+    }
+
+    protected static function newFactory()
+    {
+        return PayloadFactory::new();
     }
 }
