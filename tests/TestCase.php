@@ -2,8 +2,10 @@
 
 namespace SoapBox\SerializedPayloads\Tests;
 
+use Illuminate\Support\Str;
 use Orchestra\Testbench\TestCase as Base;
 use SoapBox\SerializedPayloads\ServiceProvider;
+use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 abstract class TestCase extends Base
@@ -12,6 +14,10 @@ abstract class TestCase extends Base
 
     protected function setUp(): void
     {
+        Factory::guessFactoryNamesUsing(function (string $modelName) {
+            return 'SoapBox\\SerializedPayloads\\Factories\\' . Str::afterLast($modelName, '\\') . 'Factory';
+        });
+
         parent::setUp();
         $this->refreshDatabase();
     }
